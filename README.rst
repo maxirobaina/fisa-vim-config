@@ -6,7 +6,7 @@ my vim configuration (lot of python, autocompletition, fuzzy finder, debugger, .
 What is this?
 -------------
 
-**(updating from a previous version? check the install section for new dependencies, and read the updating instructions. It can also be useful to look at the CHANGELOG)**
+**(IMPORTANT! updating from a previous version? check the install section for new dependencies, and read the updating instructions. It can also be useful to look at the CHANGELOG)**
 
 My personal `Vim <http://www.vim.org/>`_ configuration, built according to my personal preferences, without any justification to think it's the best possible vim configuration. If you like it, great! :)
 It's mainly oriented to python software development, but many of its features are useful for other languages and editing tasks.
@@ -50,8 +50,9 @@ Most important features include:
   * ``,e`` = open file (like the original :e) but with recursive and fuzzy file name matching. Example: if you type "mopy" it will find a file named "models.py" placed on a subdirectory. And allows you to open the selected file on a new tab with ``Ctrl-t``!
   * ``,g`` = fuzzy symbol finder (classes, methods, variables, functions, ...) on the current file. Example: if you type "usr" it will find the User class definition on the current file.
   * ``,f`` = fuzzy text finder on all the opened files. Example: if you type "ctm=6" it will find the line containing "current_time = 16".
+  * ``,m`` = fuzzy finder of most recently used files.
   * ``,d`` = same as ``,g`` (symbol finder) but initiates the search with the word under the cursor (sort of "fuzzy go to definition").
-  * ``,we``, ``,wg`` and ``,wf`` = same as ``,e``, ``,g`` and ``,f`` but initiate the search with the word under the cursor.
+  * ``,we``, ``,wg``, ``,wf`` and ``,wm`` = same as ``,e``, ``,g``, ``,f`` and ``,wm`` but initiate the search with the word under the cursor.
   * ``,pe`` = same as ``,e`` but initiates the search with the path under the cursor.
 
 * **Classes/module browser** that lists classes, functions, methods, and such of the current file, and navigates to them when ENTER is pressed. Toggle it with ``F4``.
@@ -166,6 +167,10 @@ Most important features include:
 
 * **Git integration**, with commands such as: ``:GitStatus``, ``:GitDiff``, ``:GitBlame``, ``:GitLog``, ``:GitCommit``, or simply ``:Git`` with your own command. Also includes key mappings and syntax highlighting for git displays.
 
+* Really neat **surround actions** using the surround.vim plugin. Learn how to use it `here <https://github.com/tpope/vim-surround>`_.
+
+* **Configurable mappings prefix**. All the mappings that start with ``,`` are in fact using ``<leader>``, so you can change the mapleader variable value to use a different mappings prefix (find the line that defines the variable on the ``.vimrc``).
+
 Super easy installation
 -----------------------
 
@@ -200,9 +205,10 @@ Super easy installation
 
   If you want fancy symbols and breadcrumbs on your status line, there is a small tutorial for that at the end of this README.
 
-* **Keeping your vim up-to-date**
+Keeping your vim up-to-date
+---------------------------
 
-  After updating the .vimrc, remember to run ``:BundleClean`` (this will remove plugins no longer used) and ``:BundleInstall!`` (this will install any new plugins, and update the existing ones to the last versions). You can also run ``:BundleInstall!`` at any time to update the installed plugins.
+After updating the .vimrc, you should run ``:BundleClean`` (this will remove plugins no longer used) and ``:BundleInstall!`` (this will install any new plugins, and update the existing ones to the last versions). You can also run ``:BundleInstall!`` at any time to update the installed plugins.
 
 Sources
 -------
@@ -229,7 +235,7 @@ And thanks to all the developers of the plugins that I simply use here:
 * `Search and read python documentation (PyDoc) <https://github.com/fs111/pydoc.vim>`_
 * `Class/module browser (Tagbar) <https://github.com/majutsushi/tagbar>`_
 * `Pending tasks list (TaskList) <http://www.vim.org/scripts/script.php?script_id=2607>`_
-* `python code checker (Pyflakes-vim) <http://www.vim.org/scripts/script.php?script_id=2441>`_
+* `Python code checker (Pyflakes-vim) <http://www.vim.org/scripts/script.php?script_id=2441>`_
 * `Search results counter (IndexedSearch) <http://www.vim.org/scripts/script.php?script_id=1682>`_
 * `Code commenter (NERDCommenter) <https://github.com/scrooloose/nerdcommenter>`_
 * `HTML/XML tags navigation (Matchit) <http://www.vim.org/scripts/script.php?script_id=39>`_
@@ -240,6 +246,7 @@ And thanks to all the developers of the plugins that I simply use here:
 * `Tab list pane (tabman) <https://github.com/kien/tabman.vim>`_
 * `Beautiful status line (Powerline) <https://github.com/Lokaltog/vim-powerline>`_
 * `256 colorscheme (fisa) <https://github.com/fisadev/fisa-vim-colorscheme>`_
+* `Surround actions <https://github.com/tpope/vim-surround>`_
 
 Optional: fancy symbols and breadcrumbs in the status line
 ----------------------------------------------------------
