@@ -25,7 +25,7 @@ Bundle 'gmarik/vundle'
 " Bundles from GitHub repos:
 
 " Python and PHP Debugger
-Bundle 'jabapyth/vim-debug'
+Bundle 'fisadev/vim-debug.vim'
 " Better file browser
 Bundle 'scrooloose/nerdtree'
 " Code commenter
@@ -50,13 +50,15 @@ Bundle 'Lokaltog/vim-powerline'
 Bundle 'fisadev/fisa-vim-colorscheme'
 " Consoles as buffers
 Bundle 'rosenfeld/conque-term'
+" Pending tasks list
+Bundle 'fisadev/FixedTaskList.vim'
+" Surround
+Bundle 'tpope/vim-surround'
 
 " Bundles from vim-scripts repos
 
 " Autocompletition
 Bundle 'AutoComplPop'
-" Pending tasks list
-Bundle 'TaskList.vim'
 " Python code checker
 Bundle 'pyflakes.vim'
 " Search results counter
@@ -100,6 +102,13 @@ set hlsearch
 " line numbers
 set nu
 
+" This is the prefix for many mappings we will define, change it at will
+" if you want a different prefix
+:let mapleader = ","
+
+" show title in the console title bar
+set title
+
 " toggle Tagbar display
 map <F4> :TagbarToggle<CR>
 " autofocus on Tagbar open
@@ -107,6 +116,8 @@ let g:tagbar_autofocus = 1
 
 " NERDTree (better file browser) toggle
 map <F3> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
+let g:netrw_list_hide='^\..*$,^.*\~$,^.*\.pyc$'
 
 " tab navigation
 map tn :tabn<CR>
@@ -118,15 +129,12 @@ imap <C-S-Right> <ESC>:tabn<CR>
 map <C-S-Left> :tabp<CR>
 imap <C-S-Left> <ESC>:tabp<CR>
 
-" navigate windows with meta+arrows
-map <M-Right> <c-w>l
-map <M-Left> <c-w>h
-map <M-Up> <c-w>k
-map <M-Down> <c-w>j
-imap <M-Right> <ESC><c-w>l
-imap <M-Left> <ESC><c-w>h
-imap <M-Up> <ESC><c-w>k
-imap <M-Down> <ESC><c-w>j
+" buffers navigation
+:noremap <C-left> :bprev<CR>
+:noremap <C-right> :bnext<CR> 
+:nnoremap <C-F5> :buffers<CR>:buffer<Space>
+" Enable to work with many buffers open
+set hidden 
 
 " automatically close autocompletition window
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
@@ -141,6 +149,9 @@ map <F2> :TaskList<CR>
 " removes trailing spaces of python files
 " (and restores cursor position)
 autocmd BufWritePre *.py mark z | %s/ *$//e | 'z
+" (also html and js files)
+autocmd BufWritePre *.html mark z | %s/ *$//e | 'z
+autocmd BufWritePre *.js mark z | %s/ *$//e | 'z
 
 " save as sudo
 ca w!! w !sudo tee "%"
@@ -192,33 +203,41 @@ map <F11> :Dbg down<CR>
 map <F12> :Dbg up<CR>
 
 " CtrlP (new fuzzy finder)
-let g:ctrlp_map = ',e'
-nmap ,g :CtrlPBufTag<CR>
-nmap ,f :CtrlPLine<CR>
+let g:ctrlp_map = '<leader>e'
+nmap <leader>g :CtrlPBufTag<CR>
+nmap <leader>f :CtrlPLine<CR>
+nmap <leader>m :CtrlPMRUFiles<CR>
 " to be able to call CtrlP with default search text
 function! CtrlPWithSearchText(search_text, ctrlp_command_end)
     execute ':CtrlP' . a:ctrlp_command_end
     call feedkeys(a:search_text)
 endfunction
 " CtrlP with default text
-nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
-nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
-nmap ,d ,wg
-nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
-nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
+nmap <leader>wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
+nmap <leader>wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
+nmap <leader>d :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
+nmap <leader>we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
+nmap <leader>pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
+nmap <leader>wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
 " Don't change working directory
 let g:ctrlp_working_path_mode = 0
+" Ignore files on fuzzy finder
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/](\.git|\.hg|\.svn)$',
+  \ 'file': '\.pyc$\|\.pyo$',
+  \ }
+
 
 " simple recursive grep
 command! -nargs=1 RecurGrep lvimgrep /<args>/gj ./**/*.* | lopen | set nowrap
 command! -nargs=1 RecurGrepFast silent exec 'lgrep! <q-args> ./**/*.*' | lopen
-nmap ,R :RecurGrep 
-nmap ,r :RecurGrepFast 
-nmap ,wR :RecurGrep <cword><CR>
-nmap ,wr :RecurGrepFast <cword><CR>
+nmap <leader>R :RecurGrep 
+nmap <leader>r :RecurGrepFast 
+nmap <leader>wR :RecurGrep <cword><CR>
+nmap <leader>wr :RecurGrepFast <cword><CR>
 
 " run pep8+pyflakes validator
-autocmd FileType python map <buffer> ,8 :call Flake8()<CR>
+autocmd FileType python map <buffer> <leader>8 :call Flake8()<CR>
 " rules to ignore (example: "E501,W293")
 let g:flake8_ignore=""
 
@@ -243,7 +262,7 @@ let g:tabman_focus  = 'tf'
 if &term =~? 'mlterm\|xterm\|screen-256'
 	let &t_Co = 256
     " color
-    colorscheme fisa
+    colorscheme freya
 else
     " color
     colorscheme delek
@@ -263,4 +282,25 @@ set wildmode=list:longest
 
 " to use fancy symbols for powerline, uncomment the following line and use a
 " patched font (more info on the README.rst)
-" let g:Powerline_symbols = 'fancy'
+let g:Powerline_symbols = 'fancy'
+
+
+" Comentarios
+map c I#j
+
+" User Interface
+" --------------
+set wildmenu
+set wildignore=*.pyc,*.pyo
+set ruler
+set showmode
+
+" Copy/Paste into System Clipboard
+nnoremap <C-y> "+y
+vnoremap <C-y> "+y
+nnoremap <C-p> "+gP
+vnoremap <C-p> "+gP
+
+" Python highlight
+let python_highlight_builtin_objs = 1
+let python_highlight_indent_errors = 1
