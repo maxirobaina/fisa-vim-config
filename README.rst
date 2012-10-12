@@ -48,11 +48,11 @@ Most important features include:
 * **Fuzzy file and code finder** (like Textmante or Sublime Text 2):
 
   * ``,e`` = open file (like the original :e) but with recursive and fuzzy file name matching. Example: if you type "mopy" it will find a file named "models.py" placed on a subdirectory. And allows you to open the selected file on a new tab with ``Ctrl-t``!
-  * ``,g`` = fuzzy symbol finder (classes, methods, variables, functions, ...) on the current file. Example: if you type "usr" it will find the User class definition on the current file.
+  * ``,g`` = fuzzy symbol finder (classes, methods, variables, functions, ...) on the current file. Example: if you type "usr" it will find the User class definition on the current file. ``,G`` does the same but on all opened files.
   * ``,f`` = fuzzy text finder on all the opened files. Example: if you type "ctm=6" it will find the line containing "current_time = 16".
   * ``,m`` = fuzzy finder of most recently used files.
-  * ``,d`` = same as ``,g`` (symbol finder) but initiates the search with the word under the cursor (sort of "fuzzy go to definition").
-  * ``,we``, ``,wg``, ``,wf`` and ``,wm`` = same as ``,e``, ``,g``, ``,f`` and ``,wm`` but initiate the search with the word under the cursor.
+  * ``,d`` = same as ``,g`` (symbol finder) but initiates the search with the word under the cursor (sort of "fuzzy go to definition"). ``,D`` does the same but on all opened files.
+  * ``,we``, ``,wg``, ``,wf`` and ``,wm`` = same as ``,e``, ``,g``, ``,f`` and ``,wm`` but initiate the search with the word under the cursor (also the upper case version of ``,G``, ``,wG``).
   * ``,pe`` = same as ``,e`` but initiates the search with the path under the cursor.
 
 * **Classes/module browser** that lists classes, functions, methods, and such of the current file, and navigates to them when ENTER is pressed. Toggle it with ``F4``.
@@ -126,7 +126,7 @@ Most important features include:
 
 * **Automatically removes trailing spaces** when saving python files.
 
-* **Smart autoclosing of (, [ and {**
+* **Smart autoclosing of (, [, and {**
 
 * **Beautiful color schemes for on vim with 256 colors (fisa colorscheme) and gvim (wombat colorscheme)**.
 
@@ -167,9 +167,9 @@ Most important features include:
 
 * **Git integration**, with commands such as: ``:GitStatus``, ``:GitDiff``, ``:GitBlame``, ``:GitLog``, ``:GitCommit``, or simply ``:Git`` with your own command. Also includes key mappings and syntax highlighting for git displays.
 
-* Really neat **surround actions** using the surround.vim plugin. Learn how to use it `here <https://github.com/tpope/vim-surround>`_.
+* **Better python indentation**.
 
-* **Configurable mappings prefix**. All the mappings that start with ``,`` are in fact using ``<leader>``, so you can change the mapleader variable value to use a different mappings prefix (find the line that defines the variable on the ``.vimrc``).
+* Really neat **surround actions** using the surround.vim plugin. Learn how to use it `here <https://github.com/tpope/vim-surround>`_.
 
 Super easy installation
 -----------------------
@@ -247,6 +247,8 @@ And thanks to all the developers of the plugins that I simply use here:
 * `Beautiful status line (Powerline) <https://github.com/Lokaltog/vim-powerline>`_
 * `256 colorscheme (fisa) <https://github.com/fisadev/fisa-vim-colorscheme>`_
 * `Surround actions <https://github.com/tpope/vim-surround>`_
+* `AutoClose <https://github.com/Townk/vim-autoclose>`_
+* `Better python indentation <https://github.com/vim-scripts/indentpython.vim--nianyang>`_
 
 Optional: fancy symbols and breadcrumbs in the status line
 ----------------------------------------------------------

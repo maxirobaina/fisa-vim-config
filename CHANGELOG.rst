@@ -135,3 +135,16 @@ Changelog
   * File ignores for fuzzy file finder
   * Mapping for MRU fuzzy finder with current word
   * Usage of leader instead of harcoded mapping prefixes
+
+* Version 3.6
+
+  * Reverted leader usage, to mantain compatibility with many plugins
+
+* Version 3.7
+
+  * New autoclosing plugin, that doesn't breaks undo history
+  * Better python indentation
+
+* Version 3.7.1
+
+  * Fix ESC behaviour on popups when autoclose is enabled
