@@ -48,6 +48,8 @@ Bundle 'kien/tabman.vim'
 Bundle 'Lokaltog/vim-powerline'
 " Terminal Vim with 256 colors colorscheme
 Bundle 'fisadev/fisa-vim-colorscheme'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'gmarik/ingretu'
 " Consoles as buffers
 Bundle 'rosenfeld/conque-term'
 " Pending tasks list
@@ -58,6 +60,11 @@ Bundle 'tpope/vim-surround'
 Bundle 'Townk/vim-autoclose'
 " Better python indentation
 Bundle 'vim-scripts/indentpython.vim--nianyang'
+" Indent text object
+Bundle 'michaeljsmith/vim-indent-object'
+" Javascript indentation
+Bundle 'pangloss/vim-javascript'
+
 
 " Bundles from vim-scripts repos
 
@@ -71,6 +78,12 @@ Bundle 'IndexedSearch'
 Bundle 'matchit.zip'
 " Gvim colorscheme
 Bundle 'Wombat'
+Bundle 'molokai'
+Bundle 'freya'
+" Autocompletition inside search
+Bundle 'SearchComplete'
+" Yank history navigation
+Bundle 'YankRing.vim'
 
 " Installing plugins the first time
 if iCanHazVundle == 0
@@ -128,6 +141,16 @@ map <C-S-Right> :tabn<CR>
 imap <C-S-Right> <ESC>:tabn<CR>
 map <C-S-Left> :tabp<CR>
 imap <C-S-Left> <ESC>:tabp<CR>
+
+" navigate windows with meta+arrows
+map <M-Right> <c-w>l
+map <M-Left> <c-w>h
+map <M-Up> <c-w>k
+map <M-Down> <c-w>j
+imap <M-Right> <ESC><c-w>l
+imap <M-Left> <ESC><c-w>h
+imap <M-Up> <ESC><c-w>k
+imap <M-Down> <ESC><c-w>j
 
 " buffers navigation
 :noremap <C-left> :bprev<CR>
@@ -251,11 +274,14 @@ let g:pyflakes_use_quickfix = 0
 let g:tabman_toggle = 'tl'
 let g:tabman_focus  = 'tf'
 
+
 " use 256 colors when possible
 if &term =~? 'mlterm\|xterm\|screen-256'
-	let &t_Co = 256
+    let &t_Co = 256
     " color
-    colorscheme freya
+    set background=dark    
+    let g:solarized_termcolors=256
+    colorscheme solarized
 else
     " color
     colorscheme delek
@@ -265,6 +291,7 @@ endif
 if has('gui_running')
     colorscheme wombat
 endif
+
 
 " when scrolling, keep cursor 3 lines away from screen border
 set scrolloff=3
