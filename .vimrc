@@ -61,11 +61,25 @@ Bundle 'michaeljsmith/vim-indent-object'
 Bundle 'klen/python-mode'
 " Javascript indentation
 Bundle 'pangloss/vim-javascript'
-
+" Snippets manager (SnipMate), dependencies, and snippets repo
+Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'tomtom/tlib_vim'
+Bundle 'honza/vim-snippets'
+Bundle 'garbas/vim-snipmate'
+" Git diff icons on the side of the file lines
+" Bundle 'airblade/vim-gitgutter'
+" The safetydank version has support for mercurial
+Bundle 'safetydank/vim-gitgutter'
+" Relative numbering of lines (0 is the current line)
+" (disabled by default because is very intrusive and can't be easily toggled
+" on/off. When the plugin is present, will always activate the relative 
+" numbering every time you go to normal mode. Author refuses to add a setting 
+" to avoid that)
+" Bundle 'myusuf3/numbers.vim'
 
 " Bundles from vim-scripts repos
 
-" Autocompletition
+" Autocompletion
 Bundle 'AutoComplPop'
 " Python code checker
 Bundle 'pyflakes.vim'
@@ -77,7 +91,7 @@ Bundle 'matchit.zip'
 Bundle 'Wombat'
 Bundle 'molokai'
 Bundle 'freya'
-" Autocompletition inside search
+" Autocompletion inside search
 Bundle 'SearchComplete'
 " Yank history navigation
 Bundle 'YankRing.vim'
@@ -134,6 +148,7 @@ map tn :tabn<CR>
 map tp :tabp<CR>
 map tm :tabm 
 map tt :tabnew 
+map ts :tab split<CR>
 map <C-S-Right> :tabn<CR>
 imap <C-S-Right> <ESC>:tabn<CR>
 map <C-S-Left> :tabp<CR>
@@ -156,7 +171,7 @@ imap <M-Down> <ESC><c-w>j
 " Enable to work with many buffers open
 set hidden 
 
-" automatically close autocompletition window
+" automatically close autocompletion window
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
@@ -176,7 +191,7 @@ autocmd BufWritePre *.js mark z | %s/ *$//e | 'z
 " save as sudo
 ca w!! w !sudo tee "%"
 
-" colors and settings of autocompletition
+" colors and settings of autocompletion
 highlight Pmenu ctermbg=4 guibg=LightGray
 " highlight PmenuSel ctermbg=8 guibg=DarkBlue guifg=Red
 " highlight PmenuSbar ctermbg=7 guibg=DarkGray
@@ -201,14 +216,14 @@ let OmniCpp_ShowPrototypeInAbbr = 1
 " 0 = hide access
 " 1 = show access
 let OmniCpp_ShowAccess = 1
-" This option can be use if you don't want to parse using namespace declarations in included files and want to add 
+" This option can be use if you don't want to parse using namespace declarations in included files and want to add
 " namespaces that are always used in your project.
 let OmniCpp_DefaultNamespaces = ["std"]
 " Complete Behaviour
 let OmniCpp_MayCompleteDot = 0
 let OmniCpp_MayCompleteArrow = 0
 let OmniCpp_MayCompleteScope = 0
-" When 'completeopt' does not contain "longest", Vim automatically select the first entry of the popup menu. You can 
+" When 'completeopt' does not contain "longest", Vim automatically select the first entry of the popup menu. You can
 " change this behaviour with the OmniCpp_SelectFirstItem option.
 let OmniCpp_SelectFirstItem = 0
 
@@ -274,6 +289,7 @@ let g:pymode_rope_auto_project = 1
 
 " rope (from python-mode) settings
 nmap ,d :RopeGotoDefinition<CR>
+nmap ,D :tab split<CR>:RopeGotoDefinition<CR>
 nmap ,o :RopeFindOccurrences<CR>
 
 " don't let pyflakes allways override the quickfix list
@@ -303,7 +319,7 @@ endif
 " when scrolling, keep cursor 3 lines away from screen border
 set scrolloff=3
 
-" autocompletition of files and commands behaves like shell
+" autocompletion of files and commands behaves like shell
 " (complete only the common part, list the options that match)
 set wildmode=list:longest
 

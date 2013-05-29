@@ -1,7 +1,7 @@
 fisa-vim-config
 ===============
 
-my vim configuration (lot of python, autocompletition, fuzzy finder, debugger, ...)
+my vim configuration (lot of python, autocompletion, fuzzy finder, debugger, ...)
 
 What is this?
 -------------
@@ -22,7 +22,7 @@ You can report any issue on the `Issues <https://github.com/fisadev/fisa-vim-con
 Features or it didn't happen!
 -----------------------------
 
-magic-powered autocompletition
+magic-powered autocompletion
 
 .. image:: http://i.imgur.com/7xf4A.png
 
@@ -44,7 +44,7 @@ Most important features include:
 
 * **Plugins managed using Vundle**! You can easily install or remove plugins, and they are installed into ``.vim/bundle/``. More info `here <https://github.com/gmarik/vundle>`_
 
-* **Smart autocompletition as you type**, sometimes using python instrospection (completition of module names, instance methods and attributes) and sometimes text-based (used words) (from version 4.0, it's even more intelligent!).
+* **Smart autocompletion as you type**, sometimes using python instrospection (completion of module names, instance methods and attributes) and sometimes text-based (used words) (from version 4.0, it's even more intelligent! (if you enable rope)).
 
 * **Fuzzy file and code finder** (like Textmante or Sublime Text 2):
 
@@ -58,10 +58,10 @@ Most important features include:
 
 * **Ropevim for really neat python goodies!**:
 
-  * **Go to definition** with ``,d``.
+  * **Go to definition** with ``,d``, or open the definition on a new tab with ``,D``.
   * **Find occurrences** with ``,o``.
   * and many other things, learn more about them with ``:help ropevim.txt`` (or visiting `this site <https://bitbucket.org/agr/ropevim>`_).
-  * **Note:** to use ropevim you must create a rope project (only the first time, the next times it will find it and use it). Run ``:RopeOpenProject``.
+  * **Note:** to use ropevim you must enable rope on the ``.vimrc`` (search the line containing ``let g:pymode_rope = 0``). When enabled, I recommend you to launch vim from your project root for the first time, so the ``.ropeproject`` will be created there. Then you can also add new python paths on the created ``.ropeproject/config.py`` for better autocompletion and go-to-definition.
 
 * **Classes/module browser** that lists classes, functions, methods, and such of the current file, and navigates to them when ENTER is pressed. Toggle it with ``F4``.
 
@@ -100,8 +100,6 @@ Most important features include:
 
 * **Results count** while searching text.
 
-* **Search autocompletition** of words using ``Tab``!.
-
 * **Search and read python documentation** with the ``:Pydoc`` command. Example: ``:Pydoc collections`` (also works over the current word with vim's default help keybinding: ``Shift-K``).
 
 * **Comment and uncomment code** with ``\ci``.
@@ -113,18 +111,19 @@ Most important features include:
   * ``tp`` or ``Ctrl-Shift-Left`` = previous tab.
   * ``tm`` = move current tab to a specific position (or to the end if no position number is specified).
   * ``tl`` = show a list of current tabs with their inner windows on a side pane. You can navigate them!
+  * ``ts`` = duplicate current tab.
 
   The mappings starting with the ``t`` letter work only on command mode, but the mappings with ``Ctrl-Shift`` work on both, command and insert mode.
 
 * **Easy window navigation** using ``Alt-arrows`` keys.
 
-* Some vim goodies enabled by default: 
+* Some vim goodies enabled by default:
 
   * **incremental search** (moves to the first result while you are typing).
   * **highlighted search results**.
   * **line numbers**.
   * keep **cursor 3 lines away from screen border while scrolling**.
-  * **shell-like autocompletition of commands and paths** (autocomplete the common part and show matching options).
+  * **shell-like autocompletion of commands and paths** (autocomplete the common part and show matching options).
 
 * **Python interpreter inside vim**, or any other console. They are opened as a buffer using the command ``:ConqueTerm``. Examples: ``:ConqueTerm python``, ``:ConqueTerm bash``.
 
@@ -144,15 +143,17 @@ Most important features include:
 
 * **2 spaces indentation for html and javascript** (can disable it removing two lines from the ``.vimrc``).
 
-* **Zen coding** for html: generate lots of html code writing simple and short expressions. 
-  Example: 
+* **Thousands of code snippets for many languages** with SnipMate. Example, in python you can write ``cl`` and press ``tab``, and it will insert the boilerplate code of a common python class.
+
+* **Zen coding** for html: generate lots of html code writing simple and short expressions.
+  Example:
 
   1. write ``#books>ul>li.book*5>a``
   2. press ``Ctrl-y ,``
   3. it will generate:
 
      ::
-     
+
       <div id="books">
           <ul>
               <li class="book">
@@ -172,10 +173,10 @@ Most important features include:
               </li>
           </ul>
       </div>
-     
+
   Learn more on the plugin `site <https://github.com/mattn/zencoding-vim/>`_.
 
-* **Git integration**, with commands such as: ``:GitStatus``, ``:GitDiff``, ``:GitBlame``, ``:GitLog``, ``:GitCommit``, or simply ``:Git`` with your own command. Also includes key mappings and syntax highlighting for git displays.
+* **Git integration**, with commands such as: ``:GitStatus``, ``:GitDiff``, ``:GitBlame``, ``:GitLog``, ``:GitCommit``, or simply ``:Git`` with your own command. Also includes key mappings and syntax highlighting for git displays. And displays icons on the side of each line based on the result of a git diff of the current file (example: if you added a line and still didn't commit the file, that line will have a green ``+`` on its side).
 
 * **Better python indentation**.
 
@@ -218,7 +219,7 @@ Super easy installation
   Simply run ``vim`` on your terminal, and it will try to install the plugins. They will be installed into the ``.vim/bundle`` folder.
 
   Wait for the installation to finish...
-  
+
   Done! You have your new shiny powerful vim :)
 
 * **Optional: fancy symbols and breadcrumbs**
@@ -228,7 +229,15 @@ Super easy installation
 Keeping your vim up-to-date
 ---------------------------
 
-After updating the .vimrc, you should run ``:BundleClean`` (this will remove plugins no longer used) and ``:BundleInstall!`` (this will install any new plugins, and update the existing ones to the last versions). You can also run ``:BundleInstall!`` at any time to update the installed plugins.
+After downloading the new version of the ``.vimrc`` file, you should close vim, and run (on the terminal):
+
+  ::
+
+    vim +BundleClean +BundleInstall! +qa 
+
+(this will remove plugins no longer used, install any new plugins, and update the existing ones to the last versions). 
+
+You can also run ``:BundleInstall!`` from inside vim at any time to update the installed plugins (and restart vim after it finishes).
 
 Sources
 -------
@@ -247,11 +256,11 @@ And thanks to all the developers of the plugins that I simply use here:
 
 * `Plugins manager (Vundle) <https://github.com/gmarik/vundle>`_
 * `Vundle autoinstalation <http://www.erikzaadi.com/2012/03/19/auto-installing-vundle-from-your-vimrc/>`_
-* `Python mode (smarter autocompletition, smarter go to definition and find occurrences, better python indentation, doc, refactor utilities, lints and pep8 checkers, python motion and operators, better python highlighting, run python and ipdb breakpoints) <https://github.com/klen/python-mode>`_
+* `Python mode (smarter autocompletion, smarter go to definition and find occurrences, better python indentation, doc, refactor utilities, lints and pep8 checkers, python motion and operators, better python highlighting, run python and ipdb breakpoints) <https://github.com/klen/python-mode>`_
 * `Debugger (vim-debug) <http://github.com/jabapyth/vim-debug/>`_
 * `GVim color scheme (wombat) <http://www.vim.org/scripts/script.php?script_id=1778>`_
 * `Consoles as buffers (ConqueShell) <http://www.vim.org/scripts/script.php?script_id=2771>`_
-* `Autocompletition (autocomplpop) <http://www.vim.org/scripts/script.php?script_id=1879>`_
+* `Autocompletion (autocomplpop) <http://www.vim.org/scripts/script.php?script_id=1879>`_
 * `Better file browser (NERDTree) <https://github.com/scrooloose/nerdtree>`_
 * `Class/module browser (Tagbar) <https://github.com/majutsushi/tagbar>`_
 * `Pending tasks list (TaskList) <http://www.vim.org/scripts/script.php?script_id=2607>`_
@@ -267,8 +276,12 @@ And thanks to all the developers of the plugins that I simply use here:
 * `256 colorscheme (fisa) <https://github.com/fisadev/fisa-vim-colorscheme>`_
 * `Surround actions <https://github.com/tpope/vim-surround>`_
 * `AutoClose <https://github.com/Townk/vim-autoclose>`_
-* `Search autocompletition <http://www.vim.org/scripts/script.php?script_id=474>`_
 * `YankRing <http://www.vim.org/scripts/script.php?script_id=1234>`_
+* `Indent object <http://github.com/michaeljsmith/vim-indent-object>`_
+* `Git diff icons <http://github.com/airblade/vim-gitgutter>`_
+* `Relative line numbers <http://github.com/myusuf3/numbers.vim>`_
+* `Snippets manager (SnipMate) <http://github.com/garbas/vim-snipmate>`_ (plus dependencies `addon-mw-utils <http://github.com/MarcWeber/vim-addon-mw-utils>`_ and `tlib <http://github.com/tomtom/tlib_vim>`_ )
+* `SnipMate snippets compilation <http://github.com/honza/snipmate-snippets>`_
 
 Optional: fancy symbols and breadcrumbs in the status line
 ----------------------------------------------------------
@@ -281,7 +294,7 @@ First we will need to patch a font. Pick the font you want to patch (it should b
 
 **Install**
 
-Now we need to install the patched font to our system. On Ubuntu, double click on the font file and choose "install". On other systems copy the font file to the ``YOURHOMEFOLDER/.fonts/`` folder and then run ``sudo fc-cache -vf``. 
+Now we need to install the patched font to our system. On Ubuntu, double click on the font file and choose "install". On other systems copy the font file to the ``YOURHOMEFOLDER/.fonts/`` folder and then run ``sudo fc-cache -vf``.
 
 **Configure**
 
