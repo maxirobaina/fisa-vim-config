@@ -67,9 +67,9 @@ Bundle 'tomtom/tlib_vim'
 Bundle 'honza/vim-snippets'
 Bundle 'garbas/vim-snipmate'
 " Git diff icons on the side of the file lines
-" Bundle 'airblade/vim-gitgutter'
+Bundle 'airblade/vim-gitgutter'
 " The safetydank version has support for mercurial
-Bundle 'safetydank/vim-gitgutter'
+" Bundle 'safetydank/vim-gitgutter'
 " Relative numbering of lines (0 is the current line)
 " (disabled by default because is very intrusive and can't be easily toggled
 " on/off. When the plugin is present, will always activate the relative 
@@ -333,6 +333,9 @@ let g:Powerline_symbols = 'fancy'
 
 " Comentarios
 map c I#j
+
+"This unsets the "last search pattern" register by hitting return
+nnoremap <CR> :noh<CR><CR>
 
 " User Interface
 " --------------
