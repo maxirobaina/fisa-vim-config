@@ -34,8 +34,10 @@ Bundle 'scrooloose/nerdcommenter'
 Bundle 'majutsushi/tagbar'
 " Code and files fuzzy finder
 Bundle 'kien/ctrlp.vim'
+" Extension to ctrlp, for fuzzy command finder
+Bundle 'fisadev/vim-ctrlp-cmdpalette'
 " Zen coding
-Bundle 'mattn/zencoding-vim'
+Bundle 'mattn/emmet-vim'
 " Git integration
 Bundle 'motemen/git-vim'
 " Tab list panel
@@ -56,9 +58,8 @@ Bundle 'tpope/vim-surround'
 Bundle 'Townk/vim-autoclose'
 " Indent text object
 Bundle 'michaeljsmith/vim-indent-object'
-" Python mode (indentation, doc, refactor, lints, code checking, motion and
-" operators, highlighting, run and ipdb breakpoints)
-Bundle 'klen/python-mode'
+" Python autocompletion and documentation
+Bundle 'davidhalter/jedi-vim'
 " Javascript indentation
 Bundle 'pangloss/vim-javascript'
 " Snippets manager (SnipMate), dependencies, and snippets repo
@@ -68,8 +69,17 @@ Bundle 'honza/vim-snippets'
 Bundle 'garbas/vim-snipmate'
 " Git diff icons on the side of the file lines
 Bundle 'airblade/vim-gitgutter'
+<<<<<<< HEAD
+" Better python indentation
+Bundle 'vim-scripts/indentpython.vim--nianyang'
+" PEP8 and python-flakes checker
+Bundle 'nvie/vim-flake8'
+" Search and read python documentation
+Bundle 'fs111/pydoc.vim'
+=======
 " The safetydank version has support for mercurial
 " Bundle 'safetydank/vim-gitgutter'
+>>>>>>> a733c9952c6299fca877947674d90b9a34be85d0
 " Relative numbering of lines (0 is the current line)
 " (disabled by default because is very intrusive and can't be easily toggled
 " on/off. When the plugin is present, will always activate the relative 
@@ -114,9 +124,9 @@ set softtabstop=4
 set shiftwidth=4
 
 " tablength exceptions
-autocmd FileType html setlocal shiftwidth=2 tabstop=2
-autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2
-autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
 
 " always show status bar
 set ls=2
@@ -126,6 +136,9 @@ set incsearch
 
 " highlighted search results
 set hlsearch
+
+" syntax highlight on
+syntax on
 
 " line numbers
 set nu
@@ -171,6 +184,10 @@ imap <M-Down> <ESC><c-w>j
 " Enable to work with many buffers open
 set hidden 
 
+" fix some problems with gitgutter and jedi-vim
+let g:gitgutter_eager = 0
+let g:gitgutter_realtime = 0
+
 " automatically close autocompletion window
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -196,36 +213,6 @@ highlight Pmenu ctermbg=4 guibg=LightGray
 " highlight PmenuSel ctermbg=8 guibg=DarkBlue guifg=Red
 " highlight PmenuSbar ctermbg=7 guibg=DarkGray
 " highlight PmenuThumb guibg=Black
-" use global scope search
-let OmniCpp_GlobalScopeSearch = 1
-" 0 = namespaces disabled
-" 1 = search namespaces in the current buffer
-" 2 = search namespaces in the current buffer and in included files
-let OmniCpp_NamespaceSearch = 2
-" 0 = auto
-" 1 = always show all members
-let OmniCpp_DisplayMode = 1
-" 0 = don't show scope in abbreviation
-" 1 = show scope in abbreviation and remove the last column
-let OmniCpp_ShowScopeInAbbr = 0
-" This option allows to display the prototype of a function in the abbreviation part of the popup menu.
-" 0 = don't display prototype in abbreviation
-" 1 = display prototype in abbreviation
-let OmniCpp_ShowPrototypeInAbbr = 1
-" This option allows to show/hide the access information ('+', '#', '-') in the popup menu.
-" 0 = hide access
-" 1 = show access
-let OmniCpp_ShowAccess = 1
-" This option can be use if you don't want to parse using namespace declarations in included files and want to add
-" namespaces that are always used in your project.
-let OmniCpp_DefaultNamespaces = ["std"]
-" Complete Behaviour
-let OmniCpp_MayCompleteDot = 0
-let OmniCpp_MayCompleteArrow = 0
-let OmniCpp_MayCompleteScope = 0
-" When 'completeopt' does not contain "longest", Vim automatically select the first entry of the popup menu. You can
-" change this behaviour with the OmniCpp_SelectFirstItem option.
-let OmniCpp_SelectFirstItem = 0
 
 " debugger keyboard shortcuts
 map <F5> :Dbg over<CR>
@@ -243,6 +230,7 @@ nmap ,g :CtrlPBufTag<CR>
 nmap ,G :CtrlPBufTagAll<CR>
 nmap ,f :CtrlPLine<CR>
 nmap ,m :CtrlPMRUFiles<CR>
+nmap ,c :CtrlPCmdPalette<CR>
 " to be able to call CtrlP with default search text
 function! CtrlPWithSearchText(search_text, ctrlp_command_end)
     execute ':CtrlP' . a:ctrlp_command_end
@@ -255,6 +243,7 @@ nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
 nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
 nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
 nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
+nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
 " Don't change working directory
 let g:ctrlp_working_path_mode = 0
 " Ignore files on fuzzy finder
@@ -272,25 +261,24 @@ nmap ,r :RecurGrepFast
 nmap ,wR :RecurGrep <cword><CR>
 nmap ,wr :RecurGrepFast <cword><CR>
 
-" python-mode settings
-" don't show lint result every time we save a file
-let g:pymode_lint_write = 0
-" run pep8+pyflakes+pylint validator with \8
-autocmd FileType python map <buffer> <leader>8 :PyLint<CR>
+" run pep8+pyflakes validator
+autocmd FileType python map <buffer> <leader>8 :call Flake8()<CR>
 " rules to ignore (example: "E501,W293")
-let g:pymode_lint_ignore = ""
-" don't add extra column for error icons (on console vim creates a 2-char-wide
-" extra column)
-let g:pymode_lint_signs = 0
-" don't fold python code on open
-let g:pymode_folding = 0
-" don't create rope project if doesn't exists
-let g:pymode_rope_auto_project = 1
+let g:flake8_ignore=""
 
-" rope (from python-mode) settings
-nmap ,d :RopeGotoDefinition<CR>
-nmap ,D :tab split<CR>:RopeGotoDefinition<CR>
-nmap ,o :RopeFindOccurrences<CR>
+" jedi-vim customizations
+let g:jedi#popup_on_dot = 0
+let g:jedi#use_tabs_not_buffers = 0
+let g:jedi#goto_assignments_command = ",a"
+let g:jedi#goto_definitions_command = ",d"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = ",o"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
+let g:jedi#show_call_signatures = "1"
+nmap ,D :tab split<CR>,d
+" Change snipmate binding, to avoid problems with jedi-vim
+imap <C-k> <Plug>snipMateNextOrTrigger
 
 " don't let pyflakes allways override the quickfix list
 let g:pyflakes_use_quickfix = 0
