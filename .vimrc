@@ -40,10 +40,12 @@ Bundle 'fisadev/vim-ctrlp-cmdpalette'
 Bundle 'mattn/emmet-vim'
 " Git integration
 Bundle 'motemen/git-vim'
+" Mercurial (hg) integration
+Bundle 'ludovicchabant/vim-lawrencium'
 " Tab list panel
 Bundle 'kien/tabman.vim'
-" Powerline
-Bundle 'Lokaltog/vim-powerline'
+" Airline
+Bundle 'bling/vim-airline'
 " Terminal Vim with 256 colors colorscheme
 Bundle 'fisadev/fisa-vim-colorscheme'
 Bundle 'altercation/vim-colors-solarized'
@@ -68,18 +70,16 @@ Bundle 'tomtom/tlib_vim'
 Bundle 'honza/vim-snippets'
 Bundle 'garbas/vim-snipmate'
 " Git diff icons on the side of the file lines
-Bundle 'airblade/vim-gitgutter'
-<<<<<<< HEAD
+"Bundle 'airblade/vim-gitgutter'
+Bundle 'mhinz/vim-signify'
 " Better python indentation
 Bundle 'vim-scripts/indentpython.vim--nianyang'
 " PEP8 and python-flakes checker
 Bundle 'nvie/vim-flake8'
 " Search and read python documentation
 Bundle 'fs111/pydoc.vim'
-=======
-" The safetydank version has support for mercurial
-" Bundle 'safetydank/vim-gitgutter'
->>>>>>> a733c9952c6299fca877947674d90b9a34be85d0
+" Automatically sort python imports
+Bundle 'fisadev/vim-isort'
 " Relative numbering of lines (0 is the current line)
 " (disabled by default because is very intrusive and can't be easily toggled
 " on/off. When the plugin is present, will always activate the relative 
@@ -101,8 +101,6 @@ Bundle 'matchit.zip'
 Bundle 'Wombat'
 Bundle 'molokai'
 Bundle 'freya'
-" Autocompletion inside search
-Bundle 'SearchComplete'
 " Yank history navigation
 Bundle 'YankRing.vim'
 
@@ -153,8 +151,8 @@ let g:tagbar_autofocus = 1
 
 " NERDTree (better file browser) toggle
 map <F3> :NERDTreeToggle<CR>
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
-let g:netrw_list_hide='^\..*$,^.*\~$,^.*\.pyc$'
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.pyo$']
+let g:netrw_list_hide='^\..*$,^.*\~$, ^.*\.pyc$, ^.*\.pyo$'
 
 " tab navigation
 map tn :tabn<CR>
@@ -184,10 +182,6 @@ imap <M-Down> <ESC><c-w>j
 " Enable to work with many buffers open
 set hidden 
 
-" fix some problems with gitgutter and jedi-vim
-let g:gitgutter_eager = 0
-let g:gitgutter_realtime = 0
-
 " automatically close autocompletion window
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -205,6 +199,9 @@ autocmd BufWritePre *.py mark z | %s/ *$//e | 'z
 autocmd BufWritePre *.html mark z | %s/ *$//e | 'z
 autocmd BufWritePre *.js mark z | %s/ *$//e | 'z
 
+" store yankring history file hidden
+let g:yankring_history_file = '.yankring_history'
+
 " save as sudo
 ca w!! w !sudo tee "%"
 
@@ -215,6 +212,7 @@ highlight Pmenu ctermbg=4 guibg=LightGray
 " highlight PmenuThumb guibg=Black
 
 " debugger keyboard shortcuts
+let g:vim_debug_disable_mappings = 1
 map <F5> :Dbg over<CR>
 map <F6> :Dbg into<CR>
 map <F7> :Dbg out<CR>
@@ -223,6 +221,9 @@ map <F9> :Dbg break<CR>
 map <F10> :Dbg watch<CR>
 map <F11> :Dbg down<CR>
 map <F12> :Dbg up<CR>
+
+" insert ipdb breakpoint with \b
+nmap <leader>b Oimport ipdb;ipdb.set_trace()<ESC>
 
 " CtrlP (new fuzzy finder)
 let g:ctrlp_map = ',e'
@@ -278,7 +279,7 @@ let g:jedi#rename_command = "<leader>r"
 let g:jedi#show_call_signatures = "1"
 nmap ,D :tab split<CR>,d
 " Change snipmate binding, to avoid problems with jedi-vim
-imap <C-k> <Plug>snipMateNextOrTrigger
+imap <C-i> <Plug>snipMateNextOrTrigger
 
 " don't let pyflakes allways override the quickfix list
 let g:pyflakes_use_quickfix = 0
@@ -304,6 +305,25 @@ if has('gui_running')
     colorscheme wombat
 endif
 
+" vim-airline settings
+let g:airline_powerline_fonts = 0
+let g:airline_theme = 'solarized'
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#tabline#enabled = 1
+
+" to use fancy symbols for airline, uncomment the following lines and use a
+" patched font (more info on the README.rst)
+if !exists('g:airline_symbols')
+   let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_symbols.branch = '⭠'
+let g:airline_symbols.readonly = '⭤'
+let g:airline_symbols.linenr = '⭡'
+
 " when scrolling, keep cursor 3 lines away from screen border
 set scrolloff=3
 
@@ -313,11 +333,6 @@ set wildmode=list:longest
 
 " Fix to let ESC work as espected with Autoclose plugin
 let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
-
-" to use fancy symbols for powerline, uncomment the following line and use a
-" patched font (more info on the README.rst)
-let g:Powerline_symbols = 'fancy'
-
 
 " Comentarios
 map c I#j
@@ -331,6 +346,8 @@ set wildmenu
 set wildignore=*.pyc,*.pyo
 set ruler
 set showmode
+set enc=utf-8
+set nowrap
 
 " Copy/Paste into System Clipboard
 nnoremap <C-y> "+y
@@ -339,5 +356,5 @@ nnoremap <C-p> "+gP
 vnoremap <C-p> "+gP
 
 " Python highlight
-"let python_highlight_builtin_objs = 1
+let python_highlight_builtin_objs = 1
 "let python_highlight_indent_errors = 1
