@@ -60,10 +60,11 @@ Bundle 'tpope/vim-surround'
 Bundle 'Townk/vim-autoclose'
 " Indent text object
 Bundle 'michaeljsmith/vim-indent-object'
-" Python autocompletion and documentation
-Bundle 'davidhalter/jedi-vim'
-" Javascript indentation
-Bundle 'pangloss/vim-javascript'
+" Python mode (indentation, doc, refactor, lints, code checking, motion and
+" operators, highlighting, run and ipdb breakpoints)
+Bundle 'klen/python-mode'
+" Better autocompletion
+Bundle 'Shougo/neocomplcache.vim'
 " Snippets manager (SnipMate), dependencies, and snippets repo
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
@@ -72,12 +73,6 @@ Bundle 'garbas/vim-snipmate'
 " Git diff icons on the side of the file lines
 "Bundle 'airblade/vim-gitgutter'
 Bundle 'mhinz/vim-signify'
-" Better python indentation
-Bundle 'vim-scripts/indentpython.vim--nianyang'
-" PEP8 and python-flakes checker
-Bundle 'nvie/vim-flake8'
-" Search and read python documentation
-Bundle 'fs111/pydoc.vim'
 " Automatically sort python imports
 Bundle 'fisadev/vim-isort'
 " Relative numbering of lines (0 is the current line)
@@ -86,11 +81,11 @@ Bundle 'fisadev/vim-isort'
 " numbering every time you go to normal mode. Author refuses to add a setting 
 " to avoid that)
 " Bundle 'myusuf3/numbers.vim'
+" Javascript indentation
+Bundle 'pangloss/vim-javascript'
 
 " Bundles from vim-scripts repos
 
-" Autocompletion
-Bundle 'AutoComplPop'
 " Python code checker
 Bundle 'pyflakes.vim'
 " Search results counter
@@ -205,12 +200,6 @@ let g:yankring_history_file = '.yankring_history'
 " save as sudo
 ca w!! w !sudo tee "%"
 
-" colors and settings of autocompletion
-highlight Pmenu ctermbg=4 guibg=LightGray
-" highlight PmenuSel ctermbg=8 guibg=DarkBlue guifg=Red
-" highlight PmenuSbar ctermbg=7 guibg=DarkGray
-" highlight PmenuThumb guibg=Black
-
 " debugger keyboard shortcuts
 let g:vim_debug_disable_mappings = 1
 map <F5> :Dbg over<CR>
@@ -221,9 +210,6 @@ map <F9> :Dbg break<CR>
 map <F10> :Dbg watch<CR>
 map <F11> :Dbg down<CR>
 map <F12> :Dbg up<CR>
-
-" insert ipdb breakpoint with \b
-nmap <leader>b Oimport ipdb;ipdb.set_trace()<ESC>
 
 " CtrlP (new fuzzy finder)
 let g:ctrlp_map = ',e'
@@ -262,24 +248,48 @@ nmap ,r :RecurGrepFast
 nmap ,wR :RecurGrep <cword><CR>
 nmap ,wr :RecurGrepFast <cword><CR>
 
-" run pep8+pyflakes validator
-autocmd FileType python map <buffer> <leader>8 :call Flake8()<CR>
+" python-mode settings
+" Check code every save if file has been modified
+let g:pymode_lint_on_write = 0
+" Check code every save (every)
+let g:pymode_lint_unmodified = 0
+" run pep8+pyflakes+pylint validator with \8
+autocmd FileType python map <buffer> <leader>8 :PyLint<CR>
 " rules to ignore (example: "E501,W293")
-let g:flake8_ignore=""
+let g:pymode_lint_ignore = ""
+" don't add extra column for error icons (on console vim creates a 2-char-wide
+" extra column)
+let g:pymode_lint_signs = 0
+" don't fold python code on open
+let g:pymode_folding = 0
+" don't load rope by default. Change to 1 to use rope
+let g:pymode_rope = 1
+" open definitions on same window, and with my custom mapping
+let g:pymode_rope_goto_definition_bind = ',d'
+let g:pymode_rope_goto_definition_cmd = 'e'
 
-" jedi-vim customizations
-let g:jedi#popup_on_dot = 0
-let g:jedi#use_tabs_not_buffers = 0
-let g:jedi#goto_assignments_command = ",a"
-let g:jedi#goto_definitions_command = ",d"
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = ",o"
-let g:jedi#completions_command = "<C-Space>"
-let g:jedi#rename_command = "<leader>r"
-let g:jedi#show_call_signatures = "1"
-nmap ,D :tab split<CR>,d
-" Change snipmate binding, to avoid problems with jedi-vim
-imap <C-i> <Plug>snipMateNextOrTrigger
+
+" neocomplcache settings
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_ignore_case = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_enable_auto_select = 1
+let g:neocomplcache_enable_fuzzy_completion = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_fuzzy_completion_start_length = 1
+let g:neocomplcache_auto_completion_start_length = 2
+let g:neocomplcache_manual_completion_start_length = 1
+"let g:neocomplcache_min_keyword_length = 1
+let g:neocomplcache_min_syntax_length = 3
+" complete with workds from any opened file
+let g:neocomplcache_same_filetype_lists = {}
+let g:neocomplcache_same_filetype_lists._ = '_'
+
+
+" rope (from python-mode) settings
+nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
+nmap ,o :RopeFindOccurrences<CR>
 
 " don't let pyflakes allways override the quickfix list
 let g:pyflakes_use_quickfix = 0
@@ -305,11 +315,20 @@ if has('gui_running')
     colorscheme wombat
 endif
 
+" when scrolling, keep cursor 3 lines away from screen border
+set scrolloff=3
+
+" autocompletion of files and commands behaves like shell
+" (complete only the common part, list the options that match)
+set wildmode=list:longest
+
+" Fix to let ESC work as espected with Autoclose plugin
+let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
+
 " vim-airline settings
 let g:airline_powerline_fonts = 0
 let g:airline_theme = 'solarized'
 let g:airline#extensions#whitespace#enabled = 0
-let g:airline#extensions#tabline#enabled = 1
 
 " to use fancy symbols for airline, uncomment the following lines and use a
 " patched font (more info on the README.rst)
@@ -323,16 +342,6 @@ let g:airline_right_alt_sep = '⮃'
 let g:airline_symbols.branch = '⭠'
 let g:airline_symbols.readonly = '⭤'
 let g:airline_symbols.linenr = '⭡'
-
-" when scrolling, keep cursor 3 lines away from screen border
-set scrolloff=3
-
-" autocompletion of files and commands behaves like shell
-" (complete only the common part, list the options that match)
-set wildmode=list:longest
-
-" Fix to let ESC work as espected with Autoclose plugin
-let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
 
 " Comentarios
 map c I#j
@@ -356,5 +365,5 @@ nnoremap <C-p> "+gP
 vnoremap <C-p> "+gP
 
 " Python highlight
-let python_highlight_builtin_objs = 1
+"let python_highlight_builtin_objs = 1
 "let python_highlight_indent_errors = 1
