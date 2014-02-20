@@ -148,6 +148,12 @@ let g:tagbar_autofocus = 1
 map <F3> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.pyo$']
 let g:netrw_list_hide='^\..*$,^.*\~$, ^.*\.pyc$, ^.*\.pyo$'
+let NERDTreeShowBookmarks=1
+let NERDTreeChDirMode=0
+let NERDTreeQuitOnOpen=1
+let NERDTreeMouseMode=2
+let NERDTreeShowHidden=1
+let NERDTreeKeepTreeInNewTab=1
 
 " tab navigation
 map tn :tabn<CR>
@@ -176,10 +182,6 @@ imap <M-Down> <ESC><c-w>j
 :nnoremap <C-F5> :buffers<CR>:buffer<Space>
 " Enable to work with many buffers open
 set hidden 
-
-" automatically close autocompletion window
-autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 " old autocomplete keyboard shortcut
 imap <C-J> <C-X><C-O>
@@ -249,14 +251,15 @@ nmap ,wR :RecurGrep <cword><CR>
 nmap ,wr :RecurGrepFast <cword><CR>
 
 " python-mode settings
+let g:pymode_options = 1
 " Check code every save if file has been modified
 let g:pymode_lint_on_write = 0
 " Check code every save (every)
 let g:pymode_lint_unmodified = 0
 " run pep8+pyflakes+pylint validator with \8
-autocmd FileType python map <buffer> <leader>8 :PyLint<CR>
+autocmd FileType python map <buffer> <leader>8 :PymodeLint<CR>
 " rules to ignore (example: "E501,W293")
-let g:pymode_lint_ignore = ""
+let g:pymode_lint_ignore = "E501"
 " don't add extra column for error icons (on console vim creates a 2-char-wide
 " extra column)
 let g:pymode_lint_signs = 0
@@ -270,14 +273,15 @@ let g:pymode_rope_goto_definition_cmd = 'e'
 
 
 " neocomplcache settings
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup = 0
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_auto_select = 1
 let g:neocomplcache_enable_fuzzy_completion = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
-let g:neocomplcache_fuzzy_completion_start_length = 1
+let g:neocomplcache_enable_auto_select = 1
+let g:neocomplcache_fuzzy_completion_start_length = 2
 let g:neocomplcache_auto_completion_start_length = 2
 let g:neocomplcache_manual_completion_start_length = 1
 "let g:neocomplcache_min_keyword_length = 1
@@ -357,6 +361,8 @@ set ruler
 set showmode
 set enc=utf-8
 set nowrap
+set mouse=a " Automatically enable mouse usage
+set mousehide
 
 " Copy/Paste into System Clipboard
 nnoremap <C-y> "+y
@@ -367,3 +373,18 @@ vnoremap <C-p> "+gP
 " Python highlight
 "let python_highlight_builtin_objs = 1
 "let python_highlight_indent_errors = 1
+
+
+
+" If you prefer the Omni-Completion tip window to close when a selection is
+" made, these lines close it on movement in insert mode or when leaving
+" insert mode
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+
