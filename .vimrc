@@ -75,6 +75,8 @@ Bundle 'garbas/vim-snipmate'
 Bundle 'mhinz/vim-signify'
 " Automatically sort python imports
 Bundle 'fisadev/vim-isort'
+" Drag visual blocks arround
+Bundle 'fisadev/dragvisuals.vim'
 " Relative numbering of lines (0 is the current line)
 " (disabled by default because is very intrusive and can't be easily toggled
 " on/off. When the plugin is present, will always activate the relative 
@@ -146,6 +148,7 @@ let g:tagbar_autofocus = 1
 
 " NERDTree (better file browser) toggle
 map <F3> :NERDTreeToggle<CR>
+nmap ,t :NERDTreeFind<CR>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', '\.pyo$']
 let g:netrw_list_hide='^\..*$,^.*\~$, ^.*\.pyc$, ^.*\.pyo$'
 let NERDTreeShowBookmarks=1
@@ -195,9 +198,6 @@ autocmd BufWritePre *.py mark z | %s/ *$//e | 'z
 " (also html and js files)
 autocmd BufWritePre *.html mark z | %s/ *$//e | 'z
 autocmd BufWritePre *.js mark z | %s/ *$//e | 'z
-
-" store yankring history file hidden
-let g:yankring_history_file = '.yankring_history'
 
 " save as sudo
 ca w!! w !sudo tee "%"
@@ -273,7 +273,7 @@ let g:pymode_rope_goto_definition_cmd = 'e'
 
 
 " neocomplcache settings
-let g:neocomplcache_enable_at_startup = 0
+let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_auto_select = 1
@@ -289,6 +289,8 @@ let g:neocomplcache_min_syntax_length = 3
 " complete with workds from any opened file
 let g:neocomplcache_same_filetype_lists = {}
 let g:neocomplcache_same_filetype_lists._ = '_'
+" For cursor moving in insert mode
+let g:neocomplcache_enable_insert_char_pre = 1
 
 
 " rope (from python-mode) settings
@@ -329,10 +331,39 @@ set wildmode=list:longest
 " Fix to let ESC work as espected with Autoclose plugin
 let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
 
+" Better backup, swap and undos storage
+set directory=~/.vim/dirs/tmp     " directory to place swap files in
+set backup                        " make backup files
+set backupdir=~/.vim/dirs/backups " where to put backup files
+set undofile                      " persistent undos - undo after you re-open the file
+set undodir=~/.vim/dirs/undos
+set viminfo+=n~/.vim/dirs/viminfo
+" store yankring history file there too
+let g:yankring_history_dir = '~/.vim/dirs/'
+
+
+" Create needed directories if they don't exist
+if !isdirectory(&backupdir)
+    call mkdir(&backupdir, "p")
+endif
+if !isdirectory(&directory)
+    call mkdir(&directory, "p")
+endif
+if !isdirectory(&undodir)
+    call mkdir(&undodir, "p")
+endif
+
 " vim-airline settings
 let g:airline_powerline_fonts = 0
 let g:airline_theme = 'solarized'
 let g:airline#extensions#whitespace#enabled = 0
+
+" dragvisuals mappings
+vmap <expr> <S-M-LEFT> DVB_Drag('left')
+vmap <expr> <S-M-RIGHT> DVB_Drag('right')
+vmap <expr> <S-M-DOWN> DVB_Drag('down')
+vmap <expr> <S-M-UP> DVB_Drag('up')
+vmap <expr> D DVB_Duplicate()
 
 " to use fancy symbols for airline, uncomment the following lines and use a
 " patched font (more info on the README.rst)
