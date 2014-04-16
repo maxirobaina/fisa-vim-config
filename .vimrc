@@ -68,8 +68,10 @@ Bundle 'Shougo/neocomplcache.vim'
 " Snippets manager (SnipMate), dependencies, and snippets repo
 Bundle 'MarcWeber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
-Bundle 'honza/vim-snippets'
 Bundle 'garbas/vim-snipmate'
+
+Bundle 'honza/vim-snippets'
+
 " Git diff icons on the side of the file lines
 "Bundle 'airblade/vim-gitgutter'
 Bundle 'mhinz/vim-signify'
@@ -418,4 +420,8 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+
+" Enable snipmate for django
+autocmd FileType python set ft=python.django
+autocmd FileType html set ft=htmldjango.html
 
