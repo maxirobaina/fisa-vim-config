@@ -1,3 +1,7 @@
+" ============================================================================
+" Vundle initialization
+" Avoid modify this section, unless you are very sure of what you are doing
+
 " no vi-compatible
 set nocompatible
 
@@ -12,17 +16,19 @@ if !filereadable(vundle_readme)
     let iCanHazVundle=0
 endif
 
-" required for vundle
 filetype off
 
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required!
 Bundle 'gmarik/vundle'
 
-" Bundles from GitHub repos:
+" ============================================================================
+" Active plugins
+" You can disable or add new ones here:
+
+" Plugins from github repos:
 
 " Python and PHP Debugger
 Bundle 'fisadev/vim-debug.vim'
@@ -79,6 +85,8 @@ Bundle 'mhinz/vim-signify'
 Bundle 'fisadev/vim-isort'
 " Drag visual blocks arround
 Bundle 'fisadev/dragvisuals.vim'
+" Python and other languages code checker
+"Bundle 'scrooloose/syntastic'
 " Relative numbering of lines (0 is the current line)
 " (disabled by default because is very intrusive and can't be easily toggled
 " on/off. When the plugin is present, will always activate the relative 
@@ -88,10 +96,8 @@ Bundle 'fisadev/dragvisuals.vim'
 " Javascript indentation
 Bundle 'pangloss/vim-javascript'
 
-" Bundles from vim-scripts repos
+" Plugins from vim-scripts repos:
 
-" Python code checker
-Bundle 'pyflakes.vim'
 " Search results counter
 Bundle 'IndexedSearch'
 " XML/HTML tags navigation
@@ -103,14 +109,20 @@ Bundle 'freya'
 " Yank history navigation
 Bundle 'YankRing.vim'
 
-" Installing plugins the first time
+" ============================================================================
+" Install plugins the first time vim runs
+
 if iCanHazVundle == 0
     echo "Installing Bundles, please ignore key map error messages"
     echo ""
     :BundleInstall
 endif
 
-" allow plugins by file type
+" ============================================================================
+" Vim settings and mappings
+" You can edit them as you wish
+
+" allow plugins by file type (required for plugins!)
 filetype plugin on
 filetype indent on
 
@@ -120,7 +132,7 @@ set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 
-" tablength exceptions
+" tab length exceptions on some file types
 autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2 softtabstop=2
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
@@ -137,7 +149,7 @@ set hlsearch
 " syntax highlight on
 syntax on
 
-" line numbers
+" show line numbers
 set nu
 
 " show title in the console title bar
@@ -206,6 +218,7 @@ ca w!! w !sudo tee "%"
 
 " debugger keyboard shortcuts
 let g:vim_debug_disable_mappings = 1
+" add some useful mappings
 map <F5> :Dbg over<CR>
 map <F6> :Dbg into<CR>
 map <F7> :Dbg out<CR>
@@ -215,19 +228,26 @@ map <F10> :Dbg watch<CR>
 map <F11> :Dbg down<CR>
 map <F12> :Dbg up<CR>
 
-" CtrlP (new fuzzy finder)
+" CtrlP ------------------------------
+
+" file finder mapping
 let g:ctrlp_map = ',e'
+" tags (symbols) in current file finder mapping
 nmap ,g :CtrlPBufTag<CR>
+" tags (symbols) in all files finder mapping
 nmap ,G :CtrlPBufTagAll<CR>
+" general code finder in all files mapping
 nmap ,f :CtrlPLine<CR>
+" recent files finder mapping
 nmap ,m :CtrlPMRUFiles<CR>
+" commands finder mapping
 nmap ,c :CtrlPCmdPalette<CR>
 " to be able to call CtrlP with default search text
 function! CtrlPWithSearchText(search_text, ctrlp_command_end)
     execute ':CtrlP' . a:ctrlp_command_end
     call feedkeys(a:search_text)
 endfunction
-" CtrlP with default text
+" same as previous mappings, but calling with current word as default text
 nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
 nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
 nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
@@ -235,9 +255,9 @@ nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
 nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
 nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
 nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
-" Don't change working directory
+" don't change working directory
 let g:ctrlp_working_path_mode = 0
-" Ignore files on fuzzy finder
+" ignore these files and folders on file finder
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/](\.git|\.hg|\.svn)$',
   \ 'file': '\.pyc$\|\.pyo$',
@@ -252,29 +272,37 @@ nmap ,r :RecurGrepFast
 nmap ,wR :RecurGrep <cword><CR>
 nmap ,wr :RecurGrepFast <cword><CR>
 
-" python-mode settings
+
+" Python-mode ------------------------------
+
+" don't use linter, we use syntastic for that
 let g:pymode_options = 1
+
 " Check code every save if file has been modified
 let g:pymode_lint_on_write = 0
-" Check code every save (every)
-let g:pymode_lint_unmodified = 0
-" run pep8+pyflakes+pylint validator with \8
-autocmd FileType python map <buffer> <leader>8 :PymodeLint<CR>
-" rules to ignore (example: "E501,W293")
-let g:pymode_lint_ignore = "E501"
-" don't add extra column for error icons (on console vim creates a 2-char-wide
-" extra column)
 let g:pymode_lint_signs = 0
+let g:pymode_lint_ignore="E501,W601"
+
 " don't fold python code on open
 let g:pymode_folding = 0
+
 " don't load rope by default. Change to 1 to use rope
 let g:pymode_rope = 1
-" open definitions on same window, and with my custom mapping
+
+let g:pymode_syntax_highlight_self = 1
+
+" open definitions on same window, and custom mappings for definitions and
+" occurrences
 let g:pymode_rope_goto_definition_bind = ',d'
 let g:pymode_rope_goto_definition_cmd = 'e'
+nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
+nmap ,o :RopeFindOccurrences<CR>
 
+" NeoComplCache ------------------------------
 
-" neocomplcache settings
+" most of them not documented because I'm not sure how they work
+" (docs aren't good, had to do a lot of trial and error to make 
+" it play nice)
 let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_smart_case = 1
@@ -355,10 +383,6 @@ if !isdirectory(&undodir)
     call mkdir(&undodir, "p")
 endif
 
-" vim-airline settings
-let g:airline_powerline_fonts = 0
-let g:airline_theme = 'solarized'
-let g:airline#extensions#whitespace#enabled = 0
 
 " dragvisuals mappings
 vmap <expr> <S-M-LEFT> DVB_Drag('left')
@@ -366,6 +390,11 @@ vmap <expr> <S-M-RIGHT> DVB_Drag('right')
 vmap <expr> <S-M-DOWN> DVB_Drag('down')
 vmap <expr> <S-M-UP> DVB_Drag('up')
 vmap <expr> D DVB_Duplicate()
+
+" vim-airline settings
+let g:airline_powerline_fonts = 0
+let g:airline_theme = 'solarized'
+let g:airline#extensions#whitespace#enabled = 0
 
 " to use fancy symbols for airline, uncomment the following lines and use a
 " patched font (more info on the README.rst)
@@ -406,7 +435,6 @@ vnoremap <C-p> "+gP
 " Python highlight
 "let python_highlight_builtin_objs = 1
 "let python_highlight_indent_errors = 1
-
 
 
 " If you prefer the Omni-Completion tip window to close when a selection is
